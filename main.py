@@ -2,6 +2,9 @@ from typing import Union
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from redis_om import get_redis_connection, HashModel
+from starlette.requests import Request
+import requests
+
 
 app = FastAPI()
 app.add_middleware(
@@ -32,6 +35,17 @@ class Order(HashModel):
         database = redis_conn
 
 @app.post("/orders")
-async def create(order: Order):
+async def create(request: Request):
+    body = await request.json()
+    req = requests.get('http://localhost:8000/products/%s' % body['id'])
+    product = req.json()
+    order = Order(
+        product_id=body['id'],
+        price=product['price'],
+        fee= 0.2 * product['fee'],
+        total=1.2 * body['price'],
+        quantity=body['quantity'],
+        status='pending'
+    )
     order.save()
     return order
