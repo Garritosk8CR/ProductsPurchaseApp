@@ -19,3 +19,14 @@ redis_conn = get_redis_connection(
     password="oUDjGzd2h2ljd6FyVIMdyvTp4gE3celk",
     decode_responses=True
 )
+
+class Order(HashModel):
+    product_id: str
+    price: float
+    fee: float
+    total: float
+    quantity: int
+    status: str
+
+    class Meta:
+        database = redis_conn
