@@ -36,11 +36,6 @@ class Order(HashModel):
     class Meta:
         database = redis_conn
 
-class Order_in():
-    id: str
-    quantity: int
-
-
 @app.get("/orders/{id}")
 async def read(id: str):
     return Order.get(id)
