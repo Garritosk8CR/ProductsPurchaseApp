@@ -36,19 +36,25 @@ class Order(HashModel):
     class Meta:
         database = redis_conn
 
+class Order_in():
+    id: str
+    quantity: int
+
+
 @app.get("/orders/{id}")
 async def read(id: str):
     return Order.get(id)
+
 @app.post("/orders")
 async def create(request: Request, background_tasks: BackgroundTasks):
     body = await request.json()
-    req = requests.get('http://localhost:8000/products/%s' % body['id'])
+    req = requests.get('http://localhost:8002/products/%s' % body['id'])
     product = req.json()
     order = Order(
         product_id=body['id'],
         price=product['price'],
-        fee= 0.2 * product['fee'],
-        total=1.2 * body['price'],
+        fee= 0.2 * product['price'],
+        total=1.2 * product['price'],
         quantity=body['quantity'],
         status='pending'
     )
