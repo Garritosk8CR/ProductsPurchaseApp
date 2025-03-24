@@ -30,3 +30,8 @@ class Order(HashModel):
 
     class Meta:
         database = redis_conn
+
+@app.post("/orders")
+async def create(order: Order):
+    order.save()
+    return order
